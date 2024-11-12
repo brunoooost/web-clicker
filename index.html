@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Number Counter Button</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #A1A1B5;
+            margin: 0;
         }
         .button {
             display: flex;
@@ -19,21 +22,23 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            background-color: #4CAF50;
+            background-color: #4f5063;
             color: #fff;
             border: none;
             border-radius: 10px;
             font-size: 2rem;
             cursor: pointer;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
         }
         .counter {
-            font-size: 5rem; 
-            font-weight: bold;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            font-size: 5rem;
+            font-weight: 600;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
         }
         .label {
-            font-size: 1.5rem; 
+            font-size: 1.5rem;
+        }
     </style>
 </head>
 <body>
@@ -41,27 +46,45 @@
         <div class="label">Number of clicks</div>
         <div class="counter" id="counter">0</div>
     </button>
+
     <script>
         const counterElement = document.getElementById('counter');
         const counterButton = document.getElementById('counter-button');
-        let count = parseInt(localStorage.getItem('counterValue')) || 0; 
+        
+        let count = parseInt(localStorage.getItem('counterValue')) || 0;
+        counterElement.textContent = count;
 
-        counterElement.textContent = count; 
-
-        const target = 0;
-        const increment = 1;
-        const duration = 2000; 
-        const stepTime = duration / target;
-
+        // Function to update the counter
         function updateCounter() {
-            count += increment;
+            count += 1;
             counterElement.textContent = count;
-            localStorage.setItem('counterValue', count); 
-
-            if (count < target) {
-                setTimeout(updateCounter, stepTime);
-            }
+            localStorage.setItem('counterValue', count);
         }
+
+        let intervalTime = 10000; // Start with 10 seconds interval
+
+        // Decrease counter by 1 every interval and reduce the interval time by 100ms every 100ms
+        let decrementInterval = setInterval(() => {
+            if (count > 0) {
+                count -= 1;
+                counterElement.textContent = count;
+                localStorage.setItem('counterValue', count);
+            }
+
+            // Decrease the interval time by 100ms (0.1 second) every 100ms
+            if (intervalTime > 100) {
+                intervalTime -= 100;
+                clearInterval(decrementInterval);
+                decrementInterval = setInterval(() => {
+                    if (count > 0) {
+                        count -= 1;
+                        counterElement.textContent = count;
+                        localStorage.setItem('counterValue', count);
+                    }
+                }, intervalTime);
+            }
+
+        }, intervalTime);
 
         counterButton.addEventListener('click', updateCounter);
     </script>
