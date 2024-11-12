@@ -16,6 +16,7 @@
             background-color: #A1A1B5; /* Background color */
             margin: 0;
             overflow: hidden;
+            position: relative; /* Allow positioning of text at the bottom */
         }
         .button {
             display: flex;
@@ -49,6 +50,15 @@
             border-radius: 2px;
             transition: transform 0.1s ease;
         }
+        /* Style for the text at the bottom */
+        .bottom-text {
+            position: absolute;
+            bottom: 20px;
+            font-size: 1.5rem;
+            color: #4f5063;
+            text-align: center;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -57,9 +67,12 @@
         <div class="counter" id="counter">0</div>
     </button>
 
+    <div class="bottom-text" id="bottom-text"></div> <!-- Text element at the bottom -->
+
     <script>
         const counterElement = document.getElementById('counter');
         const counterButton = document.getElementById('counter-button');
+        const bottomTextElement = document.getElementById('bottom-text');
         
         let count = parseInt(localStorage.getItem('counterValue')) || 0;
         counterElement.textContent = count;
@@ -141,6 +154,10 @@
             }
 
         }, intervalTime);
+
+        // Dynamically create the text for bstt (you can replace this with actual logic)
+        let bstt = "This is a counter created by bst04!";
+        bottomTextElement.textContent = bstt;
 
         counterButton.addEventListener('click', updateCounter);
     </script>
