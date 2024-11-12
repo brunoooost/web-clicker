@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Number Counter Button</title>
+    <title>Number Counter with Pixels</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -13,8 +13,9 @@
             align-items: center;
             height: 100vh;
             font-family: 'Poppins', sans-serif;
-            background-color: #A1A1B5;
+            background-color: #A1A1B5; /* Background color */
             margin: 0;
+            overflow: hidden;
         }
         .button {
             display: flex;
@@ -22,7 +23,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            background-color: #4f5063;
+            background-color: #4f5063; /* Button color */
             color: #fff;
             border: none;
             border-radius: 10px;
@@ -30,6 +31,7 @@
             cursor: pointer;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
             margin-bottom: 20px;
+            z-index: 10;
         }
         .counter {
             font-size: 5rem;
@@ -38,6 +40,14 @@
         }
         .label {
             font-size: 1.5rem;
+        }
+        .pixel {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #4f5063;
+            border-radius: 2px;
+            transition: transform 0.1s ease;
         }
     </style>
 </head>
@@ -54,12 +64,58 @@
         let count = parseInt(localStorage.getItem('counterValue')) || 0;
         counterElement.textContent = count;
 
-        // Function to update the counter
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+
+        const pixelSize = 10;  // Size of the "pixel"
+        const maxPixels = Math.floor((screenWidth * screenHeight) / (pixelSize * pixelSize)); // Total pixels that fit on the screen
+        
+        let pixels = JSON.parse(localStorage.getItem('pixels')) || []; // Load saved pixel positions
+
+        // Function to create a new pixel on the screen
+        function createPixel() {
+            if (pixels.length >= maxPixels) return; // Stop creating pixels if the screen is full
+
+            const x = Math.floor(Math.random() * (screenWidth - pixelSize));
+            const y = Math.floor(Math.random() * (screenHeight - pixelSize));
+
+            const pixel = { x, y }; // Store the pixel's position
+            pixels.push(pixel);
+
+            // Save the pixel positions in localStorage
+            localStorage.setItem('pixels', JSON.stringify(pixels));
+
+            // Create the pixel element and position it
+            const pixelElement = document.createElement('div');
+            pixelElement.classList.add('pixel');
+            pixelElement.style.left = `${x}px`;
+            pixelElement.style.top = `${y}px`;
+
+            document.body.appendChild(pixelElement);
+        }
+
+        // Function to update the counter and display pixels
         function updateCounter() {
             count += 1;
             counterElement.textContent = count;
             localStorage.setItem('counterValue', count);
+
+            createPixel(); // Create a new pixel for each click
         }
+
+        // Restore previously saved pixels when the page is loaded
+        function restorePixels() {
+            pixels.forEach(pixel => {
+                const pixelElement = document.createElement('div');
+                pixelElement.classList.add('pixel');
+                pixelElement.style.left = `${pixel.x}px`;
+                pixelElement.style.top = `${pixel.y}px`;
+                document.body.appendChild(pixelElement);
+            });
+        }
+
+        // Start by restoring the saved pixels
+        restorePixels();
 
         let intervalTime = 10000; // Start with 10 seconds interval
 
